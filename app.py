@@ -577,7 +577,7 @@ def compare_to_community():
 # GEMINI AI CHAT ENDPOINT
 # =============================================================================
 
-from google import genai
+import google.generativeai as genai
 
 # Configure Gemini API (set your API key as environment variable)
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
