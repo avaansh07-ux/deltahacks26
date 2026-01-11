@@ -1,20 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Deltahacks 26</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAP Optimizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        
+        <!-- Audio -->
+        <audio id="bgMusic" loop>
+            <source src="https://lambda.vgmtreasurechest.com/soundtracks/stardew-valley-original-soundtrack-2018/xfizyudh/1-01%20Stardew%20Valley%20Overture.mp3" type="audio/mpeg">
+        </audio>
+        <!-- Music Volume Control -->
+        <div class="music-control">
+            <span class="volume-icon" onclick="toggleMute()">🔊</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="30" oninput="setVolume(this.value)">
+            <span class="music-label">Music</span>
+        </div>
+        
+        <!-- SCREEN 1: Character Select -->
+        <div id="screen-title" class="screen active">
+            <div class="title-card">
+                <h1>OSAP OPTIMIZER</h1>
+                <p class="subtitle">Your path to financial freedom</p>
+                
+                <div class="character-select">
+                    <p>Choose your character:</p>
+                    <div class="character-grid">
+                        <div class="character-option" data-char="0" onclick="selectCharacter(0)">
+                            <div class="sprite-character char-0"></div>
+                        </div>
+                        <div class="character-option" data-char="1" onclick="selectCharacter(1)">
+                            <div class="sprite-character char-1"></div>
+                        </div>
+                        <div class="character-option" data-char="2" onclick="selectCharacter(2)">
+                            <div class="sprite-character char-2"></div>
+                        </div>
+                        <div class="character-option" data-char="3" onclick="selectCharacter(3)">
+                            <div class="sprite-character char-3"></div>
+                        </div>
+                        <div class="character-option" data-char="4" onclick="selectCharacter(4)">
+                            <div class="sprite-character char-4"></div>
+                        </div>
+                        <div class="character-option" data-char="5" onclick="selectCharacter(5)">
+                            <div class="sprite-character char-5"></div>
+                        </div>
+                        <div class="character-option" data-char="6" onclick="selectCharacter(6)">
+                            <div class="sprite-character char-6"></div>
+                        </div>
+                        <div class="character-option" data-char="7" onclick="selectCharacter(7)">
+                            <div class="sprite-character char-7"></div>
+                        </div>
+                        <div class="character-option" data-char="8" onclick="selectCharacter(8)">
+                            <div class="sprite-character char-8"></div>
+                        </div>
+                        <div class="character-option" data-char="9" onclick="selectCharacter(9)">
+                            <div class="sprite-character char-9"></div>
+                        </div>
+                        <div class="character-option" data-char="10" onclick="selectCharacter(10)">
+                            <div class="sprite-character char-10"></div>
+                        </div>
+                        <div class="character-option" data-char="11" onclick="selectCharacter(11)">
+                            <div class="sprite-character char-11"></div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-  </head>
-  <body>
-    <h1>Deltahacks 26</h1>
-    <p>Project scaffold is set up correctly.</p>
+                <div class="name-input">
+                    <label>Your name:</label>
+                    <input type="text" id="playerName" maxlength="12" placeholder="Student">
+                </div>
 
-    <!-- JS -->
+                <!-- Load Saved Plan -->
+                <div class="load-plan-section">
+                    <label>Have a saved plan? Enter code:</label>
+                    <div class="load-plan-row">
+                        <input type="text" id="loadPlanCode" maxlength="8" placeholder="e.g. a1b2c3d4">
+                        <button class="pixel-btn small" onclick="loadSavedPlan()">📂 Load</button>
+                    </div>
+                </div>
+
+                <button class="pixel-btn" onclick="startGame()" id="startBtn" disabled>
+                    Begin Quest
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Owl Dialogue -->
+        <div id="screen-office" class="screen">
+            <div class="office-interior">
+                
+                <!-- Owl NPC - CSS Version -->
+                <div class="npc-area">
+                    <div class="owl-container">
+                        <div class="owl-npc">
+                            <div class="grad-cap"></div>
+                            <div class="owl-ears">
+                                <div class="ear"></div>
+                                <div class="ear"></div>
+                            </div>
+                            <div class="owl-face">
+                                <div class="owl-eye left">
+                                    <div class="pupil"></div>
+                                    <div class="monocle"></div>
+                                </div>
+                                <div class="owl-eye">
+                                    <div class="pupil"></div>
+                                </div>
+                            </div>
+                            <div class="owl-beak"></div>
+                            <div class="owl-body">
+                                <div class="owl-chest"></div>
+                            </div>
+                            <div class="owl-feet">
+                                <div class="foot"></div>
+                                <div class="foot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="npc-name">Professor Hootsworth</p>
+                </div>
+
+                <!-- DIALOGUE BOX -->
+                <div class="dialogue-wrapper">
+                    <div class="dialogue-box">
+                        <div class="dialogue-header">
+                            <span class="dialogue-icon">📖</span>
+                            <span class="dialogue-speaker">Financial Aid Office</span>
+                            <button class="speak-btn dialogue-speak" id="dialogueSpeakBtn" onclick="speakDialogue()">🔊</button>
+                        </div>
+                        <div class="dialogue-body">
+                            <p class="dialogue-text" id="dialogueText">Loading...</p>
+                            <div class="dialogue-input" id="dialogueInput"></div>
+                        </div>
+                        <div class="dialogue-footer">
+                            <button class="pixel-btn" id="nextBtn" onclick="nextDialogue()">Continue</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Results -->
+        <div id="screen-results" class="screen">
+            <div class="results-wrapper">
+                <div class="scroll">
+                    <div class="scroll-top"></div>
+                    <div class="scroll-content">
+                        
+                        <!-- Header -->
+                        <div class="scroll-header">
+                            <h2>📜 Your Quest Log</h2>
+                            <p id="r-playerName">Student</p>
+                        </div>
+
+                        <!-- Loan Details -->
+                        <div class="result-section">
+                            <h3>💰 Loan Summary</h3>
+                            <div class="stat-grid">
+                                <div class="stat-box">
+                                    <div class="stat-label">Total OSAP Loan</div>
+                                    <div class="stat-value">$<span id="r-totalLoan">0</span></div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">After Grace Period</div>
+                                    <div class="stat-value">$<span id="r-afterGrace">0</span></div>
+                                    <div class="stat-note">+$<span id="r-graceInt">0</span> interest</div>
+                                </div>
+                            </div>
+                            <div class="stat-grid">
+                                <div class="stat-box">
+                                    <div class="stat-label">Federal (7.25%)</div>
+                                    <div class="stat-value">$<span id="r-fedAmount">0</span></div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Provincial (0%)</div>
+                                    <div class="stat-value">$<span id="r-provAmount">0</span></div>
+                                </div>
+                            </div>
+                            <div class="warning-banner" id="r-graceWarning">
+                                <strong>⚠️ Grace Period Alert:</strong> Interest accrues on federal portion during grace period!
+                            </div>
+                        </div>
+
+                        <!-- Community Comparison (MongoDB) -->
+                        <div class="result-section community-section">
+                            <h3>👥 How You Compare</h3>
+                            <p class="section-subtitle">See how your debt stacks up against other Ontario students</p>
+                            <div class="community-stats" id="communityStats">
+                                <div class="loading-dots">Loading community data<span class="dots">...</span></div>
+                            </div>
+                        </div>
+
+                        <!-- RAP Status -->
+                        <div class="result-section">
+                            <h3>🛡️ RAP Eligibility</h3>
+                            <div class="rap-box" id="r-rapBox">
+                                <p id="r-rapStatus">Checking...</p>
+                            </div>
+                        </div>
+
+                        <!-- Payment Paths -->
+                        <div class="result-section">
+                            <h3>⚔️ Choose Your Path</h3>
+                            <div class="path-cards">
+                                <div class="path-card minimum">
+                                    <div class="path-emoji">🐢</div>
+                                    <div class="path-name">Minimum</div>
+                                    <div class="path-payment">$<span id="r-minPay">0</span>/mo</div>
+                                    <div class="path-time" id="r-minTime">0</div>
+                                    <div class="path-interest">$<span id="r-minInt">0</span> interest</div>
+                                    <div class="path-save"></div>
+                                </div>
+                                <div class="path-card recommended">
+                                    <div class="path-badge">RECOMMENDED</div>
+                                    <div class="path-emoji">🏃</div>
+                                    <div class="path-name">Balanced</div>
+                                    <div class="path-payment">$<span id="r-recPay">0</span>/mo</div>
+                                    <div class="path-time" id="r-recTime">0</div>
+                                    <div class="path-interest">$<span id="r-recInt">0</span> interest</div>
+                                    <div class="path-save" id="r-recSave"></div>
+                                </div>
+                                <div class="path-card aggressive">
+                                    <div class="path-emoji">⚔️</div>
+                                    <div class="path-name">Aggressive</div>
+                                    <div class="path-payment">$<span id="r-aggPay">0</span>/mo</div>
+                                    <div class="path-time" id="r-aggTime">0</div>
+                                    <div class="path-interest">$<span id="r-aggInt">0</span> interest</div>
+                                    <div class="path-save" id="r-aggSave"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart -->
+                        <div class="result-section">
+                            <h3>📈 Payoff Timeline</h3>
+                            <div class="chart-container">
+                                <canvas id="questChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Extra Payment -->
+                        <div class="result-section">
+                            <h3>✨ Extra Payment Magic</h3>
+                            <p class="slider-label">What if you paid extra each month?</p>
+                            <div class="slider-row">
+                                <input type="range" id="extraSlider" min="0" max="500" step="25" value="0">
+                                <span id="extraAmount">$0</span>
+                            </div>
+                            <div class="slider-result" id="extraResult"></div>
+                        </div>
+
+                        <!-- Multi-debt (hidden) -->
+                        <div class="result-section hidden" id="r-multiDebt">
+                            <h3>🎯 Debt Battle Order</h3>
+                            <p>Total: $<span id="r-totalDebt">0</span></p>
+                            <ol id="r-debtOrder"></ol>
+                            <p class="debt-tip" id="r-strategy"></p>
+                        </div>
+
+                        <!-- Wisdom -->
+                        <div class="result-section wisdom">
+                            <div class="wisdom-icon">🦉</div>
+                            <p class="wisdom-text" id="owlWisdom"></p>
+                        </div>
+
+                        <!-- AI Chat with Professor Hootsworth -->
+                        <div class="result-section owl-chat">
+                            <h3>💬 Ask Professor Hootsworth</h3>
+                            <p class="chat-subtitle">Powered by Google Gemini AI</p>
+                            <div class="chat-container">
+                                <div class="chat-messages" id="chatMessages">
+                                    <div class="chat-message owl">
+                                        <span class="chat-icon">🦉</span>
+                                        <p>Hoo hoo! Have questions about your OSAP debt? Ask me anything!</p>
+                                    </div>
+                                </div>
+                                <div class="chat-input-container">
+                                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask about debt, RAP, repayment strategies..." onkeypress="if(event.key==='Enter')sendChat()">
+                                    <button class="pixel-btn chat-send" onclick="sendChat()">Ask 🦉</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Plan Section (MongoDB) -->
+                        <div class="result-section save-plan-section">
+                            <h3>💾 Save Your Plan</h3>
+                            <p class="section-subtitle">Save your plan to MongoDB and get a code to load it later!</p>
+                            <div class="save-plan-form">
+                                <input type="text" id="savePlanName" class="plan-name-input" placeholder="My Graduation Plan" maxlength="30">
+                                <button class="pixel-btn gold" onclick="savePlanToMongo()">💾 Save to Cloud</button>
+                            </div>
+                            <div class="save-result" id="saveResult"></div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="scroll-actions">
+                            <button class="pixel-btn" onclick="restartGame()">🔄 Start Over</button>
+                            <button class="pixel-btn gold" onclick="downloadResults()">📥 Download PDF</button>
+                        </div>
+
+                    </div>
+                    <div class="scroll-bottom"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  </body>
+</body>
 </html>
