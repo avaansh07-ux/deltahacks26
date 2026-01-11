@@ -3,3 +3,4 @@ python-dateutil
 google-generativeai
 pymongo
 elevenlabs
+gunicorn
