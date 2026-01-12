@@ -23,6 +23,9 @@ Helps Ontario students visualize and optimize their OSAP debt repayment with:
 - Frank Lin
 - Avaansh Nanda
 
+## Requires
+Must have an Mongo DB API, Google Gemini API and ElevenLabs API to access the AI Chatbot, The save feature and the PayWise's voiceover. 
+
 ## Run locally
 ```bash
 pip install -r requirements.txt
